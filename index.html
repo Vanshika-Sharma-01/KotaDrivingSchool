@@ -39,11 +39,12 @@ body{font-family:var(--font-body);background:var(--light);color:var(--navy);over
 header{position:fixed;top:34px;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(18px);border-bottom:1px solid rgba(232,160,32,.12);transition:box-shadow .3s;}
 header.scrolled{box-shadow:0 4px 30px rgba(11,29,58,.1);}
 .hd{max-width:1200px;margin:0 auto;padding:11px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
-.logo-a{display:flex;align-items:center;gap:11px;text-decoration:none;}
+.logo-a{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0;flex:1;}
 .logo-img{height:54px;width:54px;object-fit:contain;flex-shrink:0;}
-.logo-txt .l1{font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.2px;display:block;}
-.logo-txt .l2{font-family:var(--font-body);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:3px;text-transform:uppercase;display:block;margin-top:3px;}
-.hd-right{display:flex;align-items:center;gap:16px;}
+.logo-txt{min-width:0;flex:1;}
+.logo-txt .l1{font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.2px;display:block;white-space:nowrap;}
+.logo-txt .l2{font-family:var(--font-body);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:3px;text-transform:uppercase;display:block;margin-top:3px;white-space:nowrap;}
+.hd-right{display:flex;align-items:center;gap:16px;flex-shrink:0;}
 @keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,32,.45);}60%{box-shadow:0 0 0 10px rgba(232,160,32,0);}}
 .hd-call{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--navy);font-weight:700;font-size:14px;transition:color .2s;}
 .hd-call:hover{color:var(--gold);}
@@ -360,18 +361,39 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
 
 .section-divider{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));opacity:.13;}
 
-/* RESPONSIVE */
+/* =============================================
+   RESPONSIVE — MOBILE FIXES
+   ============================================= */
+
+/* 960px tablet breakpoint */
 @media(max-width:960px){
   .hero-inner,.app-grid,.w-grid,.loc-grid{grid-template-columns:1fr;}
-  .hero-visual{display:none;}
   .hd{padding:10px 18px;}
+
+  /* FIX 1: Keep ph-info visible but shrink font slightly so logo text shows */
   .ph-info{display:none;}
+
   .ft-top{grid-template-columns:1fr 1fr;}
   .app-visual{display:none;}
   .media-body{grid-template-columns:1fr;}
   .media-divider{display:none;}
   .media-img-col,.media-text-col{padding:34px 30px;}
+
+  /* FIX 2: Show hero image on tablet/mobile in single column layout */
+  .hero-visual{display:flex;margin-top:10px;}
+  .hero-img-box{max-width:100%;}
+  .hero-photo{max-width:100%;border-radius:18px;}
+  .hero-badge-abs{top:-12px;right:-8px;padding:10px 14px;}
+  .hero-badge-abs .bn{font-size:20px;}
+  .fc.fc1{bottom:-12px;left:-10px;}
+  .fc.fc2{top:14px;left:-10px;}
+
+  /* FIX 3: Trainer grid — 2 columns on tablet, taller images */
+  .tg-grid{grid-template-columns:repeat(2,1fr);}
+  .tc-img,.tc-img-ph{height:300px;}
 }
+
+/* 600px mobile breakpoint */
 @media(max-width:600px){
   section{padding:60px 18px;}
   .counters-row{grid-template-columns:repeat(2,1fr);}
@@ -381,6 +403,41 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
   .ft-top{grid-template-columns:1fr;}
   .sched-box{padding:32px 22px;}
   .media-img-col,.media-text-col{padding:26px 20px;}
+
+  /* FIX 1 (mobile): Header — ensure logo text is fully visible */
+  .hd{padding:8px 14px;gap:10px;}
+  .logo-img{height:42px;width:42px;}
+  .logo-txt .l1{font-size:14px;letter-spacing:-.1px;}
+  .logo-txt .l2{font-size:8.5px;letter-spacing:2px;}
+  .ph-wrap{width:34px;height:34px;font-size:14px;}
+
+  /* FIX 2 (mobile): Hero image — show in single column, proper sizing */
+  .hero-inner{padding:50px 18px 80px;gap:36px;}
+  .hero-visual{display:flex;margin-top:4px;}
+  .hero-img-box{max-width:100%;}
+  .hero-photo{max-width:100%;border-radius:16px;aspect-ratio:16/10;}
+  .hero-badge-abs{top:-10px;right:-6px;padding:8px 12px;border-radius:12px;}
+  .hero-badge-abs .bn{font-size:18px;}
+  .hero-badge-abs .bt{font-size:9px;}
+  .fc{padding:9px 12px;border-radius:12px;}
+  .fc.fc1{bottom:-10px;left:-6px;}
+  .fc.fc2{top:12px;left:-6px;}
+  .fc-i{width:30px;height:30px;font-size:13px;}
+  .fc-t strong{font-size:11px;}
+  .fc-t span{font-size:10px;}
+
+  /* FIX 3 (mobile): Trainer cards — 1 column, even taller images */
+  .tg-grid{grid-template-columns:1fr;}
+  .tc-img,.tc-img-ph{height:320px;}
+  .tc-body{padding:20px 18px;}
+  .tc-body h4{font-size:18px;}
+}
+
+/* Very small screens (360px) */
+@media(max-width:380px){
+  .logo-txt .l1{font-size:12.5px;}
+  .logo-txt .l2{font-size:8px;letter-spacing:1.5px;}
+  .logo-img{height:36px;width:36px;}
 }
 </style>
 </head>
@@ -898,3 +955,4 @@ cro.observe(document.getElementById('counters'));
 </script>
 </body>
 </html>
+
