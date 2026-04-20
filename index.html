@@ -20,9 +20,25 @@
   --font-head:'Playfair Display',Georgia,serif;
   --font-body:'Plus Jakarta Sans',sans-serif;
 }
+/* =============================================
+   THE FIX: Both html AND body need overflow-x:hidden
+   This is the root cause of the horizontal scrollbar
+   ============================================= */
+html{
+  scroll-behavior:smooth;
+  overflow-x:hidden; /* ← KEY FIX */
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font-body);background:var(--light);color:var(--navy);overflow-x:hidden;font-size:15.5px;line-height:1.65;letter-spacing:.01em;}
+body{
+  font-family:var(--font-body);
+  background:var(--light);
+  color:var(--navy);
+  overflow-x:hidden; /* already had this, keeping it */
+  font-size:15.5px;
+  line-height:1.65;
+  letter-spacing:.01em;
+  max-width:100vw; /* ← EXTRA SAFETY */
+}
 
 .rev{opacity:0;transform:translateY(36px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1);}
 .rev.on{opacity:1;transform:none;}
@@ -71,7 +87,19 @@ header.scrolled{box-shadow:0 4px 30px rgba(175,177,181,0.1);}
 .hs .n{font-family:var(--font-head);font-size:34px;font-weight:800;color:var(--gold2);line-height:1;}
 .hs .l{font-family:var(--font-body);font-size:11px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1.5px;margin-top:5px;font-weight:600;}
 .hero-visual{display:flex;justify-content:center;align-items:center;}
-.hero-img-box{position:relative;width:100%;max-width:460px;}
+
+/* =============================================
+   HERO IMAGE BOX — THE MAIN FIX
+   overflow:hidden clips the floating cards so
+   they never bleed outside the visible screen
+   ============================================= */
+.hero-img-box{
+  position:relative;
+  width:100%;
+  max-width:460px;
+  /* This clips absolutely-positioned children that go negative */
+  overflow:visible; /* keep visible on desktop for the badge effect */
+}
 .hero-photo{width:100%;max-width:460px;border-radius:26px;object-fit:cover;aspect-ratio:4/3;display:block;box-shadow:0 30px 80px rgba(0,0,0,.35);}
 .hero-badge-abs{position:absolute;top:-18px;right:-18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);padding:12px 18px;border-radius:16px;font-family:var(--font-head);font-weight:800;text-align:center;box-shadow:var(--sg);}
 .hero-badge-abs .bn{font-size:26px;display:block;line-height:1;}
@@ -114,15 +142,9 @@ section{padding:92px 32px;}
 .fc-card h4{font-family:var(--font-head);font-size:19px;font-weight:700;color:var(--navy);margin-bottom:9px;}
 .fc-card p{font-family:var(--font-body);color:var(--muted);font-size:14.5px;line-height:1.68;font-weight:400;}
 
-/* =============================================
-   MEDIA RECOGNITION — REDESIGNED
-   ============================================= */
+/* MEDIA RECOGNITION */
 .about{background:var(--light);}
-
-/* Centered top heading */
 .media-head{text-align:center;margin-bottom:60px;}
-
-/* Card container: image | line | text */
 .media-body{
   display:grid;
   grid-template-columns:1fr 1px 1fr;
@@ -132,8 +154,6 @@ section{padding:92px 32px;}
   overflow:hidden;
   box-shadow:var(--sd);
 }
-
-/* Left column — image */
 .media-img-col{
   padding:52px 48px;
   display:flex;
@@ -167,15 +187,11 @@ section{padding:92px 32px;}
   text-transform:uppercase;
   box-shadow:var(--sg);
 }
-
-/* Vertical divider */
 .media-divider{
   background:linear-gradient(to bottom,transparent 6%,rgba(232,160,32,.3) 28%,rgba(232,160,32,.3) 72%,transparent 94%);
   width:1px;
   align-self:stretch;
 }
-
-/* Right column — text */
 .media-text-col{
   padding:52px 52px;
   display:flex;
@@ -362,38 +378,39 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
 .section-divider{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));opacity:.13;}
 
 /* =============================================
-   RESPONSIVE — MOBILE FIXES
+   RESPONSIVE — TABLET 960px
    ============================================= */
-
-/* 960px tablet breakpoint */
 @media(max-width:960px){
   .hero-inner,.app-grid,.w-grid,.loc-grid{grid-template-columns:1fr;}
   .hd{padding:10px 18px;}
-
-  /* FIX 1: Keep ph-info visible but shrink font slightly so logo text shows */
   .ph-info{display:none;}
-
   .ft-top{grid-template-columns:1fr 1fr;}
   .app-visual{display:none;}
   .media-body{grid-template-columns:1fr;}
   .media-divider{display:none;}
   .media-img-col,.media-text-col{padding:34px 30px;}
-
-  /* FIX 2: Show hero image on tablet/mobile in single column layout */
   .hero-visual{display:flex;margin-top:10px;}
   .hero-img-box{max-width:100%;}
   .hero-photo{max-width:100%;border-radius:18px;}
-  .hero-badge-abs{top:-12px;right:-8px;padding:10px 14px;}
-  .hero-badge-abs .bn{font-size:20px;}
-  .fc.fc1{bottom:-12px;left:-10px;}
-  .fc.fc2{top:14px;left:-10px;}
 
-  /* FIX 3: Trainer grid — 2 columns on tablet, taller images */
+  /* Keep badge inside viewport on tablet */
+  .hero-badge-abs{top:-12px;right:0;padding:10px 14px;}
+  .hero-badge-abs .bn{font-size:20px;}
+
+  /* Clamp floating cards to stay inside viewport */
+  .fc.fc1{bottom:-12px;left:0;}
+  .fc.fc2{top:14px;left:0;}
+
   .tg-grid{grid-template-columns:repeat(2,1fr);}
   .tc-img,.tc-img-ph{height:300px;}
 }
 
-/* 600px mobile breakpoint */
+/* =============================================
+   RESPONSIVE — MOBILE 600px
+   The key fixes are here: floating cards repositioned
+   inside the image container so they never create
+   horizontal scroll
+   ============================================= */
 @media(max-width:600px){
   section{padding:60px 18px;}
   .counters-row{grid-template-columns:repeat(2,1fr);}
@@ -404,40 +421,74 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
   .sched-box{padding:32px 22px;}
   .media-img-col,.media-text-col{padding:26px 20px;}
 
-  /* FIX 1 (mobile): Header — ensure logo text is fully visible */
   .hd{padding:8px 14px;gap:10px;}
   .logo-img{height:42px;width:42px;}
   .logo-txt .l1{font-size:14px;letter-spacing:-.1px;}
   .logo-txt .l2{font-size:8.5px;letter-spacing:2px;}
   .ph-wrap{width:34px;height:34px;font-size:14px;}
 
-  /* FIX 2 (mobile): Hero image — show in single column, proper sizing */
   .hero-inner{padding:50px 18px 80px;gap:36px;}
   .hero-visual{display:flex;margin-top:4px;}
-  .hero-img-box{max-width:100%;}
-  .hero-photo{max-width:100%;border-radius:16px;aspect-ratio:16/10;}
-  .hero-badge-abs{top:-10px;right:-6px;padding:8px 12px;border-radius:12px;}
+
+  /* =============================================
+     MOBILE HERO IMAGE BOX FIX
+     - No negative margins on floating cards
+     - Badge tucked inside top-right corner
+     - Cards positioned INSIDE the image box
+     ============================================= */
+  .hero-img-box{
+    max-width:100%;
+    overflow:hidden; /* clips children at image boundary — no bleed */
+  }
+  .hero-photo{
+    max-width:100%;
+    border-radius:16px;
+    aspect-ratio:16/10;
+  }
+
+  /* Badge: stays inside top-right, no right:-N overflow */
+  .hero-badge-abs{
+    top:10px;
+    right:10px; /* positive value, stays inside */
+    padding:8px 12px;
+    border-radius:12px;
+  }
   .hero-badge-abs .bn{font-size:18px;}
   .hero-badge-abs .bt{font-size:9px;}
+
+  /* Floating card 1 (bottom-left): stay inside */
+  .fc.fc1{
+    bottom:10px;
+    left:10px; /* positive value */
+    animation:bob 3s ease-in-out infinite;
+  }
+
+  /* Floating card 2 (top-left): stay inside */
+  .fc.fc2{
+    top:10px;
+    left:10px; /* positive value */
+    animation:bob 3s ease-in-out infinite 1.4s;
+  }
+
   .fc{padding:9px 12px;border-radius:12px;}
-  .fc.fc1{bottom:-10px;left:-6px;}
-  .fc.fc2{top:12px;left:-6px;}
   .fc-i{width:30px;height:30px;font-size:13px;}
   .fc-t strong{font-size:11px;}
   .fc-t span{font-size:10px;}
 
-  /* FIX 3 (mobile): Trainer cards — 1 column, even taller images */
   .tg-grid{grid-template-columns:1fr;}
   .tc-img,.tc-img-ph{height:320px;}
   .tc-body{padding:20px 18px;}
   .tc-body h4{font-size:18px;}
 }
 
-/* Very small screens (360px) */
+/* Very small screens 380px */
 @media(max-width:380px){
   .logo-txt .l1{font-size:12.5px;}
   .logo-txt .l2{font-size:8px;letter-spacing:1.5px;}
   .logo-img{height:36px;width:36px;}
+
+  /* On very small screens, hide fc2 so fc1 doesn't overlap it */
+  .fc.fc2{display:none;}
 }
 </style>
 </head>
@@ -589,27 +640,17 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
 <!-- MEDIA RECOGNITION -->
 <section class="about" id="about">
   <div class="wrap">
-
-    <!-- TOP heading — centered -->
     <div class="media-head rev">
       <div class="chip">Media Recognition</div>
       <h2 class="st">Featured in the <em style="color:var(--gold);font-style:italic;">Newspaper</em></h2>
       <div class="bar"></div>
     </div>
-
-    <!-- TWO-COLUMN: Image | Line | Text -->
     <div class="media-body">
-
-      <!-- LEFT: image -->
       <div class="media-img-col revL">
         <img src="newspaper.jpeg" alt="Kota Driving School featured in newspaper" class="media-np-img">
         <div class="media-np-badge"><i class="fa fa-newspaper"></i>&nbsp; As Seen in the Press</div>
       </div>
-
-      <!-- DIVIDER LINE -->
       <div class="media-divider"></div>
-
-      <!-- RIGHT: text & highlights -->
       <div class="media-text-col revR">
         <span class="media-quote">"</span>
         <h3>Kota's Most Trusted Driving School — Recognized by the Press</h3>
@@ -646,7 +687,6 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -891,10 +931,7 @@ hr.fd{border:none;border-top:1px solid rgba(255,255,255,.07);margin:0 0 22px;}
     <div class="ft-top">
       <div class="ft-brand">
         <div class="ft-brand-logo">
-          <img src="D:\kotadrivingschool\kds-Photoroom.png"  alt="Kota Driving School Logo" class="logo-img" onerror="this.style.display='none'">
-        <span class="l1">Kota Driving School</span>
-        <span class="l2">30+ Years of Excellence</span>
-      </div>
+          <img src="kds.png" alt="Kota Driving School Logo" class="logo-img" onerror="this.style.display='none'">
           <span class="ft-brand-name">Kota Driving School</span>
         </div>
         <p>30+ Years of Excellence. Trusted by thousands of families across Kota for safe, professional, and personalised driving education.</p>
